@@ -174,63 +174,16 @@ function Run-JulesForRange {
     return $true
 }
 
-# --- メインロジック ---
-if ($Loop) {
-    # 自動ループモード（20回反復）
-    for ($count = 1, $i = 1; $count -le 20; $count++) {
-        $r = "$i-$($i + 5)"
-        $success = Run-JulesForRange -targetRange $r
-        if ($success) {
-            $i += 6
-            Start-Sleep -Seconds 5
-        }
-        else {
-            Write-Host "⚠️ $r の実行に失敗しました。5秒後に再試行します..." -ForegroundColor Yellow
-            Start-Sleep -Seconds 5
-        }
-    }
-}
-elseif ($Range -and $Increment -gt 0) {
-    # 範囲指定 + インクリメント指定モード: 例 "10-280 5"
-    if ($Range -match '^(\d+)-(\d+)$') {
-        $startTotal = [int]$Matches[1]
-        $endTotal = [int]$Matches[2]
-        for ($i = $startTotal; $i -le $endTotal; ) {
-            $subEnd = [Math]::Min($i + $Increment - 1, $endTotal)
-            $r = "$i-$subEnd"
-            $success = Run-JulesForRange -targetRange $r
-            
-            if ($success) {
-                $i += $Increment
-                # 少し待機して次のリクエストへ
-                Start-Sleep -Seconds 5
-            }
-            else {
-                Write-Host "⚠️ $r の実行に失敗しました。5秒後に再試行します..." -ForegroundColor Yellow
-                Start-Sleep -Seconds 5
-            }
-        }
+# --- メインロジック（分岐なしで20回反復） ---
+for ($count = 1, $i = 1; $count -le 20; $count++) {
+    $r = "$i-$($i + 5)"
+    $success = Run-JulesForRange -targetRange $r
+    if ($success) {
+        $i += 6
+        Start-Sleep -Seconds 5
     }
     else {
-        Write-Error "範囲の形式が正しくありません (Increment併用時): $Range"
-    }
-}
-elseif ($Range) {
-    # 個別範囲指定モード
-    Run-JulesForRange -targetRange $Range
-}
-else {
-    # 引数なしモード（ユーザー入力なし / 20回反復）
-    for ($count = 1, $i = 1; $count -le 20; $count++) {
-        $r = "$i-$($i + 5)"
-        $success = Run-JulesForRange -targetRange $r
-        if ($success) {
-            $i += 6
-            Start-Sleep -Seconds 5
-        }
-        else {
-            Write-Host "⚠️ $r の実行に失敗しました。5秒後に再試行します..." -ForegroundColor Yellow
-            Start-Sleep -Seconds 5
-        }
+        Write-Host "⚠️ $r の実行に失敗しました。5秒後に再試行します..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 5
     }
 }
