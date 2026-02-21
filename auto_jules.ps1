@@ -17,6 +17,15 @@ $BASE_URL = "https://jules.googleapis.com/v1alpha"
 function Run-JulesForRange {
     param([string]$targetRange)
 
+    try {
+        Set-Content -Path "story_master.txt" -Value "" -NoNewline -Encoding UTF8
+        Write-Host "🧹 story_master.txt を空にしました。" -ForegroundColor Gray
+    }
+    catch {
+        Write-Error "story_master.txt の初期化に失敗しました: $($_.Exception.Message)"
+        return $false
+    }
+
     if (Test-Path "G:\jules_session_list\session-limit.txt") {
         $limitNum = Get-Content "G:\jules_session_list\session-limit.txt" | Select-Object -First 1
         if ($limitNum -match '^\d+$' -and [int]$limitNum -ge 85) {
