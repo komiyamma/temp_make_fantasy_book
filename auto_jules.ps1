@@ -175,7 +175,8 @@ function Run-JulesForRange {
 }
 
 # --- メインロジック（分岐なしで20回反復） ---
-for ($count = 1, $i = 1; $count -le 20; $count++) {
+$i = 1
+for ($count = 1; $count -le 20; $count++) {
     $r = "$i-$($i + 5)"
     $success = Run-JulesForRange -targetRange $r
     if ($success) {
