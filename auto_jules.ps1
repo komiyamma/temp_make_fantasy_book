@@ -176,8 +176,8 @@ function Run-JulesForRange {
 
 # --- メインロジック ---
 if ($Loop) {
-    # 自動ループモード (デフォルト設定)
-    for ($i = 1; $i -le 1000; ) {
+    # 自動ループモード（20回反復）
+    for ($count = 1, $i = 1; $count -le 20; $count++) {
         $r = "$i-$($i + 5)"
         $success = Run-JulesForRange -targetRange $r
         if ($success) {
@@ -220,37 +220,17 @@ elseif ($Range) {
     Run-JulesForRange -targetRange $Range
 }
 else {
-    # 従来モード (引数なし)
-    $input = Read-Host "範囲を入力（例: 221-230 または 10-280 5）"
-    if ([string]::IsNullOrWhiteSpace($input)) {
-        Write-Warning "入力されませんでした。"
-        exit
-    }
-
-    $parts = $input -split '\s+'
-    if ($parts.Count -eq 2 -and $parts[0] -match '^\d+-\d+$') {
-        # 入力から Range と Increment を抽出
-        $r = $parts[0]
-        $inc = [int]$parts[1]
-        if ($r -match '^(\d+)-(\d+)$') {
-            $startTotal = [int]$Matches[1]
-            $endTotal = [int]$Matches[2]
-            for ($i = $startTotal; $i -le $endTotal; ) {
-                $subEnd = [Math]::Min($i + $inc - 1, $endTotal)
-                $r = "$i-$subEnd"
-                $success = Run-JulesForRange -targetRange $r
-                if ($success) {
-                    $i += $inc
-                    Start-Sleep -Seconds 5
-                }
-                else {
-                    Write-Host "⚠️ $r の実行に失敗しました。5秒後に再試行します..." -ForegroundColor Yellow
-                    Start-Sleep -Seconds 5
-                }
-            }
+    # 引数なしモード（ユーザー入力なし / 20回反復）
+    for ($count = 1, $i = 1; $count -le 20; $count++) {
+        $r = "$i-$($i + 5)"
+        $success = Run-JulesForRange -targetRange $r
+        if ($success) {
+            $i += 6
+            Start-Sleep -Seconds 5
         }
-    }
-    else {
-        Run-JulesForRange -targetRange $parts[0]
+        else {
+            Write-Host "⚠️ $r の実行に失敗しました。5秒後に再試行します..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 5
+        }
     }
 }
