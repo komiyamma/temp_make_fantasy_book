@@ -68,7 +68,7 @@ function Run-JulesForRange {
         }
         requirePlanApproval = $false
         automationMode      = "AUTO_CREATE_PR"
-        title               = "MDのnano banana 用の画像生成計画を立てる。($targetRange)"
+        title               = "小説の内容を考える。($targetRange)"
     } | ConvertTo-Json -Depth 10
 
     $session = Invoke-RestMethod -Uri "$BASE_URL/sessions" -Method Post -Headers $HEADERS -Body $body
